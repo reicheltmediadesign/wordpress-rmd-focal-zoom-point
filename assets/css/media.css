@@ -89,6 +89,35 @@
 	object-position: var(--rmd-fzp-pos, 50% 50%);
 }
 
+/* Center guides: vertical turquoise, horizontal pink; hidden on hover to see the crop unobstructed. */
+.rmd-fzp-preview__frame::before,
+.rmd-fzp-preview__frame::after {
+	content: "";
+	position: absolute;
+	z-index: 1;
+	pointer-events: none;
+	transition: opacity 0.15s ease;
+}
+
+.rmd-fzp-preview__frame::before {
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	border-left: 1px dashed #00c8c8;
+}
+
+.rmd-fzp-preview__frame::after {
+	top: 50%;
+	right: 0;
+	left: 0;
+	border-top: 1px dashed #ff2d95;
+}
+
+.rmd-fzp-preview__frame:hover::before,
+.rmd-fzp-preview__frame:hover::after {
+	opacity: 0;
+}
+
 .rmd-fzp-preview figcaption {
 	margin-top: 2px;
 	color: #646970;

@@ -4,7 +4,7 @@ Tags: focal point, image, crop, zoom, media library
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,11 @@ Zoom needs a container that clips the image. Core image and featured image block
 Print `rmd_fzp_style( $image_id )` into its style attribute and use `background-position: var(--rmd-fzp-pos, center)`.
 
 == Changelog ==
+
+= 0.1.2 =
+* Crop previews in the media library use a grid with at most two columns.
+* The focal point picker in the media library shows the center guides while dragging.
+* Center guide colors swapped: vertical pink, horizontal turquoise.
 
 = 0.1.1 =
 * Dashed center guides in the media library crop previews, hidden on hover.

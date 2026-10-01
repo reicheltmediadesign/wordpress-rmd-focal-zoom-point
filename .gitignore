@@ -1,0 +1,19 @@
+node_modules/
+vendor/
+build/
+dist/
+.phpunit.cache/
+.phpunit.result.cache
+
+# Generated translation binaries are produced by the release workflow
+languages/*.mo
+languages/*.l10n.php
+languages/*.json
+
+# Derived from the de_DE PO by bin/make-i18n.sh
+languages/*-de_DE_formal.po
+
+.DS_Store
+.vscode/
+.idea/
+*.log

@@ -1,0 +1,105 @@
+/* Media library field, see includes/Admin/MediaField.php. Zoom in the previews comes from focal-zoom.css. */
+
+.rmd-fzp-field {
+	max-width: 480px;
+}
+
+.rmd-fzp-field__picker {
+	position: relative;
+	cursor: crosshair;
+	touch-action: none;
+	user-select: none;
+	line-height: 0;
+}
+
+.rmd-fzp-field__picker img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-width: none;
+}
+
+.rmd-fzp-field__dot {
+	position: absolute;
+	left: var(--rmd-fzp-x, 50%);
+	top: var(--rmd-fzp-y, 50%);
+	width: 24px;
+	height: 24px;
+	margin: -12px 0 0 -12px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: rgba(34, 113, 177, 0.55);
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.35);
+	pointer-events: none;
+}
+
+.rmd-fzp-field__controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+	margin: 8px 0;
+}
+
+.rmd-fzp-field__controls label {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.compat-item .rmd-fzp-field__controls input[type="number"],
+.rmd-fzp-field__controls input[type="number"] {
+	width: 5.5em;
+}
+
+.rmd-fzp-field__zoom input[type="range"] {
+	width: 110px;
+}
+
+.rmd-fzp-field__previews {
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+}
+
+.rmd-fzp-preview {
+	flex: 1 1 0;
+	min-width: 0;
+	margin: 0;
+}
+
+.rmd-fzp-preview__frame {
+	display: block;
+	position: relative;
+	background: #f0f0f1;
+}
+
+.rmd-fzp-preview__frame.is-round {
+	max-width: 110px;
+	border-radius: 50%;
+}
+
+.rmd-fzp-preview__frame img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	max-width: none;
+	object-fit: cover;
+	object-position: var(--rmd-fzp-pos, 50% 50%);
+}
+
+.rmd-fzp-preview figcaption {
+	margin-top: 2px;
+	color: #646970;
+	font-size: 11px;
+}
+
+/* Media modal: full-width row below the other attachment fields. */
+.compat-item .compat-field-rmd_fzp .label,
+.compat-item .compat-field-rmd_fzp .field {
+	width: auto;
+	float: none;
+	margin: 0 0 6px;
+	text-align: left;
+}

@@ -5,6 +5,15 @@ All notable changes to this plugin are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The focal point picker in the media library shows the center guides while dragging.
+
+### Changed
+
+- Center guides swapped colors: vertical pink, horizontal turquoise.
+- Crop previews in the media library are laid out in a grid with at most two columns, so they stay readable in the narrow sidebar of the attachment details.
+
 ## [0.1.1] – 2026-10-01
 
 ### Added

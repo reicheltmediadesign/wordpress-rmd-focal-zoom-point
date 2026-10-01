@@ -5,6 +5,8 @@ All notable changes to this plugin are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] – 2026-10-01
+
 ### Added
 
 - Dashed center guides in the media library crop previews (vertical turquoise, horizontal pink), hidden on hover.

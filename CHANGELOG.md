@@ -5,6 +5,8 @@ All notable changes to this plugin are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] – 2026-10-01
+
 ### Added
 
 - The focal point picker in the media library shows the center guides while dragging.

@@ -1,0 +1,29 @@
+{
+  "name": "rmd-focal-zoom-point",
+  "version": "0.1.0",
+  "description": "WordPress plugin that stores a focal point and zoom on every image and applies them wherever the image is cropped.",
+  "author": "Philipp Reichelt <info@reicheltmedia.design> (https://reicheltmedia.design)",
+  "license": "GPL-2.0-or-later",
+  "private": true,
+  "homepage": "https://github.com/reicheltmediadesign/wordpress-rmd-focal-zoom-point",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reicheltmediadesign/wordpress-rmd-focal-zoom-point.git"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js src assets/js",
+    "lint:css": "wp-scripts lint-style \"assets/css/*.css\"",
+    "lint": "npm run lint:js && npm run lint:css",
+    "i18n": "bash bin/make-i18n.sh",
+    "zip": "bash bin/build-zip.sh",
+    "check-version": "bash bin/check-version.sh"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^35.0.0"
+  }
+}

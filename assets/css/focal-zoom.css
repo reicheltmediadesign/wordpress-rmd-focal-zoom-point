@@ -1,0 +1,70 @@
+/**
+ * RMD Focal Zoom Point – zoom.
+ *
+ * The focal point needs no stylesheet: every <img> carries an inline
+ * object-position. Zoom scales the image inside a clipping frame and keeps the
+ * focal point as close to the middle as the edges allow. It uses the
+ * individual transform properties (scale, translate), so a theme's own
+ * `transform` (hover effects, parallax) still applies on top.
+ *
+ * Custom properties set by the plugin on the image (or block wrapper):
+ *   --rmd-fzp-x, --rmd-fzp-y  focal point in percent
+ *   --rmd-fzp-pos             both, for object-position / background-position
+ *   --rmd-fzp-zoom            zoom factor, 1–3
+ *   --rmd-fzp-ratio           width / height of the image (wrapper only)
+ *
+ * Classes:
+ *   .rmd-fzp-frame  clipping container, set by the plugin for core blocks
+ *                   or by the theme on its own containers
+ *   .rmd-fzp-wrap   the <span> the plugin puts around zoomed core images
+ *   .rmd-fzp-zoom   image (or block wrapper) with zoom > 1
+ */
+
+.rmd-fzp-frame {
+	overflow: hidden;
+}
+
+.rmd-fzp-wrap {
+	display: inline-block;
+	max-width: 100%;
+	vertical-align: bottom;
+	line-height: 0;
+}
+
+.is-style-rounded .rmd-fzp-wrap {
+	border-radius: 9999px;
+}
+
+/*
+ * Scaled around the center, then moved so the focal point sits in the middle
+ * of the frame – but never so far that an edge of the image comes into view:
+ * the shift is clamped to ±(zoom − 1) / 2 of the frame.
+ */
+.rmd-fzp-frame img.rmd-fzp-zoom,
+.rmd-fzp-editor.rmd-fzp-zoom-on img {
+
+	/*
+	 * The frame does the rounding. A radius on the image would be scaled with
+	 * it and cut odd shapes into the frame; theme rules such as
+	 * ".is-style-rounded img" are usually more specific, hence !important.
+	 */
+	border-radius: 0 !important;
+	transform-origin: 50% 50%;
+	scale: var(--rmd-fzp-zoom, 1);
+	translate:
+		clamp(calc((0.5 - var(--rmd-fzp-zoom, 1) / 2) * 100%), calc(var(--rmd-fzp-zoom, 1) * (50% - var(--rmd-fzp-x, 50%))), calc((var(--rmd-fzp-zoom, 1) / 2 - 0.5) * 100%))
+		clamp(calc((0.5 - var(--rmd-fzp-zoom, 1) / 2) * 100%), calc(var(--rmd-fzp-zoom, 1) * (50% - var(--rmd-fzp-y, 50%))), calc((var(--rmd-fzp-zoom, 1) / 2 - 0.5) * 100%));
+}
+
+/* Block editor canvas: the values sit on the block wrapper there. */
+.rmd-fzp-editor img {
+	object-position: var(--rmd-fzp-pos, 50% 50%);
+}
+
+.rmd-fzp-editor.rmd-fzp-zoom-on :has(> img) {
+	overflow: hidden;
+}
+
+.rmd-fzp-editor.rmd-fzp-zoom-on.is-style-rounded :has(> img) {
+	border-radius: 9999px;
+}

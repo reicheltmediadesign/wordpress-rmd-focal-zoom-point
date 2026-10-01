@@ -99,7 +99,17 @@
 		}
 		event.preventDefault();
 		picker.setPointerCapture( event.pointerId );
+		picker.classList.add( 'is-dragging' );
 		fromPointer( picker, event );
+	} );
+
+	// Also fires on pointercancel, so the guides never stay visible.
+	document.addEventListener( 'lostpointercapture', function ( event ) {
+		if (
+			event.target.matches( '[data-rmd-fzp-field] [data-rmd-fzp-picker]' )
+		) {
+			event.target.classList.remove( 'is-dragging' );
+		}
 	} );
 
 	document.addEventListener( 'pointermove', function ( event ) {

@@ -3,7 +3,7 @@
  * Plugin Name:       RMD Focal Zoom Point
  * Plugin URI:        https://github.com/reicheltmediadesign/wordpress-rmd-focal-zoom-point
  * Description:       Set a focal point and zoom on every image in the media library or right where it is used. Cropped images keep their important part in view, in any theme.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * Author:            Philipp Reichelt, reichelt media.design
@@ -21,7 +21,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RMD_FZP_VERSION', '0.1.0' );
+define( 'RMD_FZP_VERSION', '0.1.1' );
 define( 'RMD_FZP_FILE', __FILE__ );
 define( 'RMD_FZP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RMD_FZP_URL', plugin_dir_url( __FILE__ ) );

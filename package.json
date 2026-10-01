@@ -1,6 +1,6 @@
 {
   "name": "rmd-focal-zoom-point",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "WordPress plugin that stores a focal point and zoom on every image and applies them wherever the image is cropped.",
   "author": "Philipp Reichelt <info@reicheltmedia.design> (https://reicheltmedia.design)",
   "license": "GPL-2.0-or-later",

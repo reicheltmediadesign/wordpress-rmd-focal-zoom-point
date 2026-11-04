@@ -31,4 +31,35 @@ final class InlineStyle {
 	public static function has_property( string $style, string $property ): bool {
 		return 1 === preg_match( '/(^|;)\s*' . preg_quote( $property, '/' ) . '\s*:/i', $style );
 	}
+
+	/**
+	 * Removes declarations of the given properties and of all properties
+	 * starting with one of the prefixes. Semicolons inside parentheses
+	 * (e.g. in url()) do not split declarations.
+	 *
+	 * @param string   $style      Style attribute value.
+	 * @param string[] $properties Property names.
+	 * @param string[] $prefixes   Property name prefixes, e.g. "--rmd-fzp-".
+	 */
+	public static function remove( string $style, array $properties, array $prefixes = [] ): string {
+		$properties = array_map( 'strtolower', $properties );
+		$kept       = [];
+		foreach ( (array) preg_split( '/;(?![^(]*\))/', $style ) as $declaration ) {
+			$declaration = trim( (string) $declaration );
+			if ( '' === $declaration ) {
+				continue;
+			}
+			$name = strtolower( trim( strstr( $declaration, ':', true ) ?: $declaration ) );
+			if ( in_array( $name, $properties, true ) ) {
+				continue;
+			}
+			foreach ( $prefixes as $prefix ) {
+				if ( str_starts_with( $name, strtolower( $prefix ) ) ) {
+					continue 2;
+				}
+			}
+			$kept[] = $declaration;
+		}
+		return $kept ? implode( '; ', $kept ) . ';' : '';
+	}
 }

@@ -1,8 +1,9 @@
 /**
  * Focal point picker with zoom for one image. Without onChange it edits the
- * image itself (saved right away); with value/onChange it is controlled, e.g.
- * for a per-block override. Exposed to themes as
- * window.rmdFocalZoomPoint.FocalZoomControl.
+ * image itself (saved right away): the general values, or with `variant` the
+ * own values for that crop variant (created on the first change). With
+ * value/onChange it is controlled, e.g. for a per-block override. Exposed to
+ * themes as window.rmdFocalZoomPoint.FocalZoomControl.
  */
 import {
 	Button,
@@ -21,7 +22,8 @@ import {
 	isDefault,
 	normalize,
 	useImagePoint,
-	useSaveImagePoint,
+	useSaveImageFocus,
+	withPoint,
 } from './data';
 
 const fromPicker = ( value ) => ( {
@@ -29,9 +31,14 @@ const fromPicker = ( value ) => ( {
 	y: Math.round( value.y * 1000 ) / 10,
 } );
 
-export function FocalZoomControl( { id, value, onChange } ) {
-	const { media, point: imagePoint, canEdit } = useImagePoint( id );
-	const saveImage = useSaveImagePoint( id );
+export function FocalZoomControl( { id, value, onChange, variant = null } ) {
+	const {
+		media,
+		focus,
+		point: imagePoint,
+		canEdit,
+	} = useImagePoint( id, variant );
+	const saveImage = useSaveImageFocus( id );
 	const controlled = typeof onChange === 'function';
 
 	if ( ! id ) {
@@ -57,7 +64,7 @@ export function FocalZoomControl( { id, value, onChange } ) {
 		if ( controlled ) {
 			onChange( clean );
 		} else {
-			saveImage( clean );
+			saveImage( withPoint( focus, variant, clean ) );
 		}
 	};
 

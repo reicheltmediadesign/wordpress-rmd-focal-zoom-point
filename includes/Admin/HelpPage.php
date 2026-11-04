@@ -65,6 +65,7 @@ final class HelpPage {
 		echo '<ul class="ul-disc">';
 		echo '<li>' . esc_html__( 'Media library: open an image and use the field "Focal point & zoom". Click the important part or drag the dot, set the zoom and check the previews. The values are saved with the image and apply wherever it is used.', 'rmd-focal-zoom-point' ) . '</li>';
 		echo '<li>' . esc_html__( 'Block editor: select an image block (or a block your theme supports) and open the panel "Focal point & zoom" in the sidebar. Changes there are saved to the image right away. Switch on "Adjust for this block only" to use different values in this one place.', 'rmd-focal-zoom-point' ) . '</li>';
+		echo '<li>' . esc_html__( 'Own values per crop: if the focal point fits most crops but not one of them (e.g. the circle), click the preview of that crop in the media library and adjust it there. The other crops keep the general values ("All crops"). In the block editor, image blocks with an aspect ratio or the "Rounded" style offer "Own values for …" that crop.', 'rmd-focal-zoom-point' ) . '</li>';
 		echo '<li>' . esc_html__( 'Zoom also lets you move the focus in a direction where the image would otherwise not reach, e.g. sideways in a tall portrait shown as a circle.', 'rmd-focal-zoom-point' ) . '</li>';
 		echo '<li>' . esc_html__( 'Images that are not cropped look the same as before.', 'rmd-focal-zoom-point' ) . '</li>';
 		echo '</ul>';

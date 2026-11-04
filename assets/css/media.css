@@ -4,6 +4,50 @@
 	max-width: 480px;
 }
 
+.rmd-fzp-field__targets {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0 0 8px;
+}
+
+.rmd-fzp-field__targets .button[aria-pressed="true"] {
+	border-color: #2271b1;
+	background: #2271b1;
+	color: #fff;
+}
+
+/* Variant with own values. */
+.rmd-fzp-field__targets .button.has-own::after {
+	content: "";
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	margin-left: 6px;
+	border-radius: 50%;
+	background: currentcolor;
+	vertical-align: middle;
+}
+
+.rmd-fzp-field__hint-variant,
+.rmd-fzp-field__inherit,
+.rmd-fzp-preview__own {
+	display: none;
+}
+
+.rmd-fzp-field.is-variant .rmd-fzp-field__hint-all {
+	display: none;
+}
+
+.rmd-fzp-field.is-variant .rmd-fzp-field__hint-variant,
+.rmd-fzp-field.is-variant.has-own .rmd-fzp-field__inherit {
+	display: block;
+}
+
+.rmd-fzp-preview.has-own .rmd-fzp-preview__own {
+	display: inline;
+}
+
 .rmd-fzp-field__picker {
 	position: relative;
 	cursor: crosshair;
@@ -72,7 +116,23 @@
 .rmd-fzp-preview__frame {
 	display: block;
 	position: relative;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
 	background: #f0f0f1;
+	cursor: pointer;
+}
+
+.rmd-fzp-preview__frame[aria-pressed="true"] {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.rmd-fzp-preview__frame:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+	box-shadow: none;
 }
 
 .rmd-fzp-preview__frame.is-round {
@@ -124,9 +184,14 @@
 }
 
 .rmd-fzp-preview figcaption {
-	margin-top: 2px;
+	margin-top: 4px;
 	color: #646970;
 	font-size: 11px;
+}
+
+.rmd-fzp-preview__own {
+	color: #2271b1;
+	font-weight: 600;
 }
 
 /* Media modal: full-width row below the other attachment fields. */

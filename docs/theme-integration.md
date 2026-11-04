@@ -1,6 +1,6 @@
 # Theme integration guide
 
-RMD Focal Zoom Point stores a **focal point** (x/y in percent) and a **zoom** factor (1–3) on every image. This guide explains what works in any theme without changes and what a theme has to do for the rest.
+RMD Focal Zoom Point stores a **focal point** (x/y in percent) and a **zoom** factor (1–3) on every image, optionally with own values per **crop variant** (e.g. one for round crops). This guide explains what works in any theme without changes and what a theme has to do for the rest.
 
 ## In short
 
@@ -12,6 +12,7 @@ RMD Focal Zoom Point stores a **focal point** (x/y in percent) and a **zoom** fa
 | Zoom on images in your own templates | No | Add the class `rmd-fzp-frame` to the clipping container |
 | Images you output as CSS background | No | Use `rmd_fzp_style()` and `var(--rmd-fzp-pos)` |
 | Your own blocks | No | Register them with the filter `rmd_fzp_blocks` |
+| Own values per crop (variants) | For core image and featured image blocks with an aspect ratio or the "Rounded" style | Define your crops with `rmd_fzp_variants`, name the variant where you output an image |
 
 Everything degrades gracefully: without the plugin, or for images without values, nothing is added to the markup.
 
@@ -155,19 +156,66 @@ Add the filter before `init` (in `functions.php` or when your plugin loads). For
 
 The editor script is enqueued at priority 5 of `enqueue_block_editor_assets`, before block scripts. This way the attribute is also added to blocks that register in their own editor script.
 
-## 6. Preview frames in the media library
+## 6. Crop variants
 
-The media library shows three previews below the picker (wide banner, landscape, circle). Replace them with the crops your theme uses:
+One focal point does not always fit every crop: the landscape and portrait crops look right, but in a circle the face sits off-centre. Editors can therefore set **own values per crop variant**. Each variant is a preview below the picker in the media library; clicking a preview edits that crop only. Variants without own values use the general values ("All crops").
+
+### Defining the variants
+
+The defaults are `wide` (16 / 5), `landscape` (3 / 2), `portrait` (3 / 4) and `round` (square & circle). Replace them with the crops your theme uses:
 
 ```php
-add_filter( 'rmd_fzp_previews', function () {
+add_filter( 'rmd_fzp_variants', function () {
 	return [
-		[ 'label' => __( 'Hero', 'mytheme' ), 'ratio' => '1440 / 380' ],
-		[ 'label' => __( 'Card', 'mytheme' ), 'ratio' => '4 / 3' ],
-		[ 'label' => __( 'Portrait', 'mytheme' ), 'ratio' => '1', 'round' => true ],
+		[ 'key' => 'hero', 'label' => __( 'Hero', 'mytheme' ), 'ratio' => '1440 / 380' ],
+		[ 'key' => 'card', 'label' => __( 'Card', 'mytheme' ), 'ratio' => '4 / 3' ],
+		[ 'key' => 'team', 'label' => __( 'Team portrait', 'mytheme' ), 'ratio' => '1', 'round' => true ],
 	];
 } );
 ```
+
+- `key`: lowercase letters, digits, `-` and `_`, at most 40 characters. It is stored with the image, so keep it stable. Without a key, one is derived from the label.
+- `ratio`: width / height of the crop, also the aspect ratio of the preview.
+- `round`: circular crop.
+
+Values for a variant your theme no longer defines stay on the image and come back when the variant is defined again.
+
+The old filter `rmd_fzp_previews` (before 0.2.0) still works but is deprecated. Its entries get their keys from the labels.
+
+### Which variant applies
+
+- **Core image block:** the block style "Rounded" takes the round variant. An aspect ratio set in the block takes the variant with the closest ratio; round variants count as squares. Without aspect ratio and rounding the image is not cropped, and the general values apply.
+- **Featured image block:** the same, from its aspect ratio.
+- **Your own blocks:** the same rules, if they have the attributes `aspectRatio` or `className`. Otherwise set the variant with the filters below.
+- **Your templates:** name the variant where you output the image (see below). Without one, the general values apply.
+
+A per-block override ("Adjust for this block only") always wins over the variant.
+
+```php
+// wp_get_attachment_image(): the argument rmd_fzp_variant.
+echo wp_get_attachment_image( $id, 'medium', false, [ 'rmd_fzp_variant' => 'team' ] );
+
+// The functions take the variant as their last parameter.
+$style = rmd_fzp_style( $id, null, false, 'hero' );
+$html  = rmd_fzp_image_tag( $html, $id, null, 'card' );
+$point = rmd_fzp_point( $id, null, 'team' );
+```
+
+Own blocks that always crop the same way set their variant with a PHP filter for the front end and a JS filter for the editor canvas and panel:
+
+```php
+add_filter( 'rmd_fzp_block_variant', function ( $variant, $name, $attrs ) {
+	return 'mytheme/team-member' === $name ? 'team' : $variant;
+}, 10, 3 );
+```
+
+```js
+wp.hooks.addFilter( 'rmdFzp.blockVariant', 'mytheme/variant', ( variant, name ) =>
+	'mytheme/team-member' === name ? 'team' : variant
+);
+```
+
+In the block editor the panel of such a block shows the switch "Own values for …". Switched on, the control edits the values of that variant on the image; switched off, it edits the general values.
 
 ## 7. The control in your own editor panels
 
@@ -175,10 +223,13 @@ Themes with their own editor panels (e.g. a page hero in the document sidebar) c
 
 | Export | Purpose |
 | --- | --- |
-| `FocalZoomControl` | `{ id }` edits the image and saves it right away; `{ id, value, onChange }` is controlled (your own storage). |
-| `useImagePoint( id )` | Hook returning `{ media, point, canEdit }`; `point` is `{ x, y, zoom }`, the centre when nothing is set. |
+| `FocalZoomControl` | `{ id }` edits the image and saves it right away; `{ id, variant }` edits the own values of a crop variant; `{ id, value, onChange }` is controlled (your own storage). |
+| `useImagePoint( id, variant )` | Hook returning `{ media, focus, point, canEdit }`. `point` is `{ x, y, zoom }` for the variant (its own values, else the general ones, else the centre); `variant` is optional. `focus` is everything stored, `null` if nothing. |
 | `styleFor( point )` | Style object with the custom properties, for a preview element. |
-| `normalize( value )` | Clamps and rounds a value; `null` if it is invalid. |
+| `normalize( value )` | Clamps and rounds a point; `null` if it is invalid. |
+| `normalizeFocus( value )` | The same for the stored value with variants. |
+| `blockVariant( name, attributes )` | Variant key of a block (aspect ratio, "Rounded", filter `rmdFzp.blockVariant`), `null` if unknown. |
+| `variants` | The crop variants: `[ { key, label, ratio, round } ]`, `ratio` as a number. |
 
 ```js
 const { FocalZoomControl, useImagePoint, styleFor } = window.rmdFocalZoomPoint || {};
@@ -199,16 +250,20 @@ Guard calls with `function_exists()`, so the theme keeps working without the plu
 
 | Function | Returns |
 | --- | --- |
-| `rmd_fzp_point( int $id, ?array $override = null )` | `[ 'x' => float, 'y' => float, 'zoom' => float ]`, the centre and zoom 1 if nothing is set |
-| `rmd_fzp_style( int $id, ?array $override = null, bool $object_position = false )` | CSS custom properties for a `style` attribute, empty if nothing is set |
-| `rmd_fzp_image_tag( string $html, int $id, ?array $override = null )` | `$html` with the values on its first `<img>` |
+| `rmd_fzp_point( int $id, ?array $override = null, ?string $variant = null )` | `[ 'x' => float, 'y' => float, 'zoom' => float ]`, the centre and zoom 1 if nothing is set |
+| `rmd_fzp_style( int $id, ?array $override = null, bool $object_position = false, ?string $variant = null )` | CSS custom properties for a `style` attribute, empty if nothing is set |
+| `rmd_fzp_image_tag( string $html, int $id, ?array $override = null, ?string $variant = null )` | `$html` with the values on its first `<img>` |
+
+`$variant` is the key of a crop variant: its own values are used if the image has them, else the general ones. Unknown keys are ignored. `wp_get_attachment_image()` takes it as the attribute `rmd_fzp_variant`.
 
 ### Filters
 
 | Filter | Purpose |
 | --- | --- |
 | `rmd_fzp_blocks` | Blocks with panel and override: `[ 'block/name' => 'idAttribute' ]`. Default: `core/image => id`. |
-| `rmd_fzp_previews` | Preview frames in the media library: `[ 'label', 'ratio', 'round' ]`. |
+| `rmd_fzp_variants` | Crop variants, shown as previews in the media library: `[ 'key', 'label', 'ratio', 'round' ]`. |
+| `rmd_fzp_block_variant` | Variant of a block: `( ?string $variant, string $name, array $attrs )`. JS counterpart: `rmdFzp.blockVariant`. |
+| `rmd_fzp_previews` | Deprecated since 0.2.0, use `rmd_fzp_variants`. |
 | `rmd_fzp_load_style` | Return `false` to skip `assets/css/focal-zoom.css` (then add the zoom rules to your theme). |
 
 ### CSS custom properties
@@ -234,7 +289,7 @@ Always give a fallback, e.g. `var(--rmd-fzp-pos, center)`.
 
 ### Data
 
-- Post meta `_rmd_fzp` on the attachment: `{ "x": 30, "y": 20, "zoom": 1.5 }`. The centre without zoom is not stored.
+- Post meta `_rmd_fzp` on the attachment: `{ "x": 30, "y": 20, "zoom": 1.5 }`, with own values per crop variant `{ "x": 30, "y": 20, "zoom": 1.5, "variants": { "round": { "x": 45, "y": 25, "zoom": 1.2 } } }`. The centre without zoom and without variants is not stored.
 - REST: `meta._rmd_fzp` on `/wp/v2/media/{id}`, writable for users who may edit the image. `null` deletes it.
 - Block attribute `rmdFzp` for per-use overrides.
 
@@ -244,5 +299,5 @@ Always give a fallback, e.g. `var(--rmd-fzp-pos, center)`.
 2. Containers that clip images carry `rmd-fzp-frame`, with the same border radius as the image.
 3. Background images print `rmd_fzp_style()` and use `var(--rmd-fzp-pos, center)`, or become `<img>` elements.
 4. Own blocks are registered with `rmd_fzp_blocks`. Their editor styles use the custom properties.
-5. Preview frames in the media library match the theme's crops (`rmd_fzp_previews`).
+5. The crop variants match the theme's crops (`rmd_fzp_variants`), and templates name the variant they crop to (`rmd_fzp_variant`).
 6. All calls are guarded with `function_exists()`, and all `var()` calls have fallbacks.

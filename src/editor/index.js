@@ -2,7 +2,8 @@
  * Block editor integration:
  *
  * - adds the override attribute (rmdFzp) to the supported blocks,
- * - a "Focal point & zoom" panel for them,
+ * - a "Focal point & zoom" panel for them; for blocks with a known crop
+ *   (aspect ratio, "Rounded" style) also own values for that crop variant,
  * - the values on the block wrapper in the canvas, so the preview crops like
  *   the page (assets/css/focal-zoom.css, .rmd-fzp-editor),
  * - takes an image's focal point over into the cover block's own focal point
@@ -14,16 +15,25 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { FocalZoomControl } from './control';
 import {
 	ATTRIBUTE,
 	BLOCKS,
+	VARIANTS,
+	blockVariant,
+	hasVariant,
 	isDefault,
 	normalize,
+	normalizeFocus,
+	resolve,
 	styleFor,
 	useImagePoint,
+	useSaveImageFocus,
+	variantLabel,
+	withPoint,
+	withoutVariant,
 } from './data';
 
 addFilter(
@@ -43,9 +53,56 @@ addFilter(
 	}
 );
 
-function BlockPanel( { id, attributes, setAttributes } ) {
+function VariantToggle( { id, variant } ) {
+	const { focus, point, canEdit } = useImagePoint( id, variant );
+	const saveImage = useSaveImageFocus( id );
+	const own = hasVariant( focus, variant );
+	const label = variantLabel( variant );
+
+	return (
+		<ToggleControl
+			__nextHasNoMarginBottom
+			label={ sprintf(
+				/* translators: %s: name of a crop, e.g. "Square & circle". */
+				__( 'Own values for “%s”', 'rmd-focal-zoom-point' ),
+				label
+			) }
+			help={
+				own
+					? sprintf(
+							/* translators: %s: name of a crop. */
+							__(
+								'Saved to the image for every use cropped as “%s”. Other crops keep the general values.',
+								'rmd-focal-zoom-point'
+							),
+							label
+						)
+					: sprintf(
+							/* translators: %s: name of a crop. */
+							__(
+								'This block crops the image as “%s”. Switch on to adjust this crop of the image separately; otherwise changes apply to all crops.',
+								'rmd-focal-zoom-point'
+							),
+							label
+						)
+			}
+			checked={ own }
+			disabled={ ! canEdit }
+			onChange={ ( on ) =>
+				saveImage(
+					on
+						? withPoint( focus, variant, point )
+						: withoutVariant( focus, variant )
+				)
+			}
+		/>
+	);
+}
+
+function BlockPanel( { id, name, attributes, setAttributes } ) {
 	const override = normalize( attributes[ ATTRIBUTE ] );
-	const { point: imagePoint } = useImagePoint( id );
+	const variant = blockVariant( name, attributes );
+	const { focus, point: imagePoint } = useImagePoint( id, variant );
 
 	return (
 		<PanelBody
@@ -85,7 +142,17 @@ function BlockPanel( { id, attributes, setAttributes } ) {
 					}
 				/>
 			) : (
-				<FocalZoomControl id={ id } />
+				<>
+					{ variant && (
+						<VariantToggle id={ id } variant={ variant } />
+					) }
+					<FocalZoomControl
+						id={ id }
+						variant={
+							hasVariant( focus, variant ) ? variant : null
+						}
+					/>
+				</>
 			) }
 		</PanelBody>
 	);
@@ -146,6 +213,7 @@ const withPanel = createHigherOrderComponent(
 				<InspectorControls>
 					<BlockPanel
 						id={ id }
+						name={ props.name }
 						attributes={ props.attributes }
 						setAttributes={ props.setAttributes }
 					/>
@@ -163,13 +231,16 @@ const withPreview = createHigherOrderComponent(
 		const override = attribute
 			? normalize( props.attributes[ ATTRIBUTE ] )
 			: null;
-		const { point } = useImagePoint( override ? 0 : id );
+		const { focus } = useImagePoint( override ? 0 : id );
 
 		let active = null;
 		if ( override ) {
 			active = override;
-		} else if ( id && ! isDefault( point ) ) {
-			active = point;
+		} else if ( id ) {
+			active = resolve(
+				focus,
+				blockVariant( props.name, props.attributes )
+			);
 		}
 		if ( ! active ) {
 			return <BlockListBlock { ...props } />;
@@ -209,4 +280,7 @@ window.rmdFocalZoomPoint = {
 	useImagePoint,
 	styleFor,
 	normalize,
+	normalizeFocus,
+	blockVariant,
+	variants: VARIANTS,
 };

@@ -72,9 +72,10 @@ final class Assets {
 			self::EDITOR_SCRIPT,
 			'window.rmdFzpConfig = ' . wp_json_encode(
 				[
-					'blocks'  => Blocks::supported(),
-					'minZoom' => FocalPoint::MIN_ZOOM,
-					'maxZoom' => FocalPoint::MAX_ZOOM,
+					'blocks'   => Blocks::supported(),
+					'variants' => array_values( array_map( static fn( $variant ) => $variant->to_script(), Variants::all() ) ),
+					'minZoom'  => FocalPoint::MIN_ZOOM,
+					'maxZoom'  => FocalPoint::MAX_ZOOM,
 				]
 			) . ';',
 			'before'

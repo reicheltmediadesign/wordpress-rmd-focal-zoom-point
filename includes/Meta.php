@@ -1,6 +1,7 @@
 <?php
 /**
- * Storage of the focal point and zoom on the attachment.
+ * Storage of the focal point and zoom on the attachment: general values plus
+ * own values per crop variant.
  *
  * @package RMD\FocalZoomPoint
  */
@@ -8,6 +9,7 @@
 namespace RMD\FocalZoomPoint;
 
 use RMD\FocalZoomPoint\Domain\FocalPoint;
+use RMD\FocalZoomPoint\Domain\ImageFocus;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,6 +26,24 @@ final class Meta {
 	 * save it on the media endpoint. Sending null deletes it.
 	 */
 	public static function register(): void {
+		$point = [
+			'x'    => [
+				'type'    => 'number',
+				'minimum' => 0,
+				'maximum' => 100,
+			],
+			'y'    => [
+				'type'    => 'number',
+				'minimum' => 0,
+				'maximum' => 100,
+			],
+			'zoom' => [
+				'type'    => 'number',
+				'minimum' => FocalPoint::MIN_ZOOM,
+				'maximum' => FocalPoint::MAX_ZOOM,
+			],
+		];
+
 		register_post_meta(
 			'attachment',
 			self::KEY,
@@ -34,21 +54,14 @@ final class Meta {
 					'schema' => [
 						'type'                 => 'object',
 						'additionalProperties' => false,
-						'properties'           => [
-							'x'    => [
-								'type'    => 'number',
-								'minimum' => 0,
-								'maximum' => 100,
-							],
-							'y'    => [
-								'type'    => 'number',
-								'minimum' => 0,
-								'maximum' => 100,
-							],
-							'zoom' => [
-								'type'    => 'number',
-								'minimum' => FocalPoint::MIN_ZOOM,
-								'maximum' => FocalPoint::MAX_ZOOM,
+						'properties'           => $point + [
+							'variants' => [
+								'type'                 => 'object',
+								'additionalProperties' => [
+									'type'                 => 'object',
+									'additionalProperties' => false,
+									'properties'           => $point,
+								],
 							],
 						],
 					],
@@ -63,34 +76,47 @@ final class Meta {
 
 	/**
 	 * @param mixed $value Raw value.
-	 * @return array{x: float, y: float, zoom: float}
+	 * @return array
 	 */
 	public static function sanitize( $value ): array {
-		return ( FocalPoint::from( $value ) ?? FocalPoint::center() )->to_array();
+		return ( ImageFocus::from( $value ) ?? ImageFocus::empty() )->to_array();
 	}
 
 	/**
-	 * Stored point of an image.
+	 * Everything stored on an image.
 	 *
-	 * @return FocalPoint|null Null if the image has none (center, no zoom).
+	 * @return ImageFocus|null Null if the image has nothing stored.
 	 */
-	public static function get( int $attachment_id ): ?FocalPoint {
+	public static function get( int $attachment_id ): ?ImageFocus {
 		if ( $attachment_id <= 0 ) {
 			return null;
 		}
-		$point = FocalPoint::from( get_post_meta( $attachment_id, self::KEY, true ) );
-		return $point && ! $point->is_default() ? $point : null;
+		$focus = ImageFocus::from( get_post_meta( $attachment_id, self::KEY, true ) );
+		return $focus && ! $focus->is_empty() ? $focus : null;
 	}
 
 	/**
-	 * Stores a point; the center without zoom removes the meta.
+	 * Values for one use of an image.
+	 *
+	 * @param int         $attachment_id Attachment ID.
+	 * @param string|null $variant       Crop variant of the use, null if unknown.
+	 * @return FocalPoint|null Null if there is nothing to apply.
 	 */
-	public static function save( int $attachment_id, FocalPoint $point ): void {
-		if ( $point->is_default() ) {
+	public static function point( int $attachment_id, ?string $variant = null ): ?FocalPoint {
+		$focus = self::get( $attachment_id );
+		return $focus ? $focus->resolve( $variant ) : null;
+	}
+
+	/**
+	 * Stores the values; the center without zoom and without variants removes
+	 * the meta.
+	 */
+	public static function save( int $attachment_id, ImageFocus $focus ): void {
+		if ( $focus->is_empty() ) {
 			delete_post_meta( $attachment_id, self::KEY );
 			return;
 		}
-		update_post_meta( $attachment_id, self::KEY, $point->to_array() );
+		update_post_meta( $attachment_id, self::KEY, $focus->to_array() );
 	}
 
 	/**

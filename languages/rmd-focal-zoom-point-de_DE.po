@@ -68,62 +68,54 @@ msgstr "Mediathek: Öffnen Sie ein Bild und nutzen Sie das Feld „Bildausschnit
 msgid "Block editor: select an image block (or a block your theme supports) and open the panel \"Focal point & zoom\" in the sidebar. Changes there are saved to the image right away. Switch on \"Adjust for this block only\" to use different values in this one place."
 msgstr "Block-Editor: Wählen Sie einen Bild-Block (oder einen Block, den Ihr Theme unterstützt) und öffnen Sie in der Seitenleiste das Panel „Bildausschnitt & Zoom“. Änderungen dort werden sofort am Bild gespeichert. Schalten Sie „Nur für diesen Block anpassen“ ein, um an dieser einen Stelle andere Werte zu verwenden."
 
-#: includes/Admin/HelpPage.php:68
+#: includes/Admin/HelpPage.php:69
 msgid "Zoom also lets you move the focus in a direction where the image would otherwise not reach, e.g. sideways in a tall portrait shown as a circle."
 msgstr "Mit dem Zoom lässt sich der Ausschnitt auch in Richtungen verschieben, in denen das Bild sonst nicht übersteht, z. B. seitlich bei einem Hochformat-Porträt im Kreis."
 
-#: includes/Admin/HelpPage.php:69
+#: includes/Admin/HelpPage.php:70
 msgid "Images that are not cropped look the same as before."
 msgstr "Bilder, die nicht beschnitten werden, sehen aus wie bisher."
 
-#: includes/Admin/HelpPage.php:73
+#: includes/Admin/HelpPage.php:74
 msgid "The following guide for theme developers is only available in English."
 msgstr "Die folgende Anleitung für Theme-Entwickler gibt es nur auf Englisch."
 
-#: includes/Admin/HelpPage.php:79
+#: includes/Admin/HelpPage.php:80
 msgid "The theme integration guide (docs/theme-integration.md) is missing from this installation."
 msgstr "Die Anleitung zur Theme-Integration (docs/theme-integration.md) fehlt in dieser Installation."
 
-#: includes/Admin/MediaField.php:34
+#: includes/Variants.php:34
 msgid "Wide banner"
 msgstr "Breites Banner"
 
-#: includes/Admin/MediaField.php:39
+#: includes/Variants.php:39
 msgid "Landscape"
 msgstr "Querformat"
 
-#: includes/Admin/MediaField.php:44
-msgid "Circle"
-msgstr "Kreis"
-
-#: includes/Admin/MediaField.php:97
+#: includes/Admin/MediaField.php:83
 msgid "Click the most important part of the image or drag the dot. Wherever the image is cropped, this part stays in view. Zoom enlarges the image around it – this also lets you move the focus sideways in a tall image shown in a square or circle."
 msgstr "Klicken Sie auf den wichtigsten Bildbereich oder ziehen Sie den Punkt. Überall, wo das Bild beschnitten wird, bleibt dieser Bereich sichtbar. Der Zoom vergrößert das Bild um ihn herum – so lässt sich der Ausschnitt auch bei einem Hochformat im Quadrat oder Kreis seitlich verschieben."
 
-#: includes/Admin/MediaField.php:99
+#: includes/Admin/MediaField.php:86
 msgid "Horizontal"
 msgstr "Horizontal"
 
-#: includes/Admin/MediaField.php:100
+#: includes/Admin/MediaField.php:87
 msgid "Vertical"
 msgstr "Vertikal"
 
-#: includes/Admin/MediaField.php:101
+#: includes/Admin/MediaField.php:88
 #: build/editor.js:1
 msgid "Zoom"
 msgstr "Zoom"
 
-#: includes/Admin/MediaField.php:105
+#: includes/Admin/MediaField.php:92
 #: build/editor.js:1
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: includes/Admin/MediaField.php:117
-msgid "Applies wherever this image is used. In the block editor it can be adjusted for a single use."
-msgstr "Gilt überall, wo dieses Bild verwendet wird. Im Block-Editor lässt es sich für eine einzelne Verwendung anpassen."
-
-#: includes/Admin/MediaField.php:122
-#: build/editor.js:1
+#: includes/Admin/MediaField.php:111
+#: build/editor.js:4
 msgid "Focal point & zoom"
 msgstr "Bildausschnitt & Zoom"
 
@@ -145,14 +137,68 @@ msgstr "Sie dürfen dieses Bild nicht ändern. Sie können es aber nur für dies
 msgid "Enlarges the image around the focal point. Also lets you move the focus sideways in a tall image shown in a square or circle."
 msgstr "Vergrößert das Bild um den Fokuspunkt. So lässt sich der Ausschnitt auch bei einem Hochformat im Quadrat oder Kreis seitlich verschieben."
 
-#: build/editor.js:1
+#: build/editor.js:4
 msgid "Adjust for this block only"
 msgstr "Nur für diesen Block anpassen"
 
-#: build/editor.js:1
+#: build/editor.js:4
 msgid "These values apply only here. The image keeps its own values elsewhere."
 msgstr "Diese Werte gelten nur hier. An anderen Stellen behält das Bild seine eigenen Werte."
 
-#: build/editor.js:1
+#: build/editor.js:4
 msgid "Changes are saved to the image right away and apply wherever it is used."
 msgstr "Änderungen werden sofort am Bild gespeichert und gelten überall, wo es verwendet wird."
+
+#: includes/Admin/HelpPage.php:68
+msgid "Own values per crop: if the focal point fits most crops but not one of them (e.g. the circle), click the preview of that crop in the media library and adjust it there. The other crops keep the general values (\"All crops\"). In the block editor, image blocks with an aspect ratio or the \"Rounded\" style offer \"Own values for …\" that crop."
+msgstr "Eigene Werte je Zuschnitt: Passt der Fokuspunkt für die meisten Zuschnitte, aber nicht für einen (z. B. den Kreis), klicken Sie in der Mediathek auf die Vorschau dieses Zuschnitts und passen Sie ihn dort an. Die anderen Zuschnitte behalten die allgemeinen Werte („Alle Zuschnitte“). Im Block-Editor bieten Bild-Blöcke mit Seitenverhältnis oder dem Stil „Abgerundet“ „Eigene Werte für …“ diesen Zuschnitt an."
+
+#: includes/Admin/MediaField.php:71
+msgid "Values for"
+msgstr "Werte für"
+
+#: includes/Admin/MediaField.php:72
+msgid "All crops"
+msgstr "Alle Zuschnitte"
+
+#: includes/Admin/MediaField.php:84
+msgid "These values apply only to this crop. As long as you do not change them, it uses the values of “All crops”."
+msgstr "Diese Werte gelten nur für diesen Zuschnitt. Solange Sie sie nicht ändern, verwendet er die Werte von „Alle Zuschnitte“."
+
+#: includes/Admin/MediaField.php:93
+msgid "Use values of “All crops”"
+msgstr "Werte von „Alle Zuschnitte“ verwenden"
+
+#: includes/Admin/MediaField.php:102
+msgid "own values"
+msgstr "eigene Werte"
+
+#: includes/Admin/MediaField.php:106
+msgid "Applies wherever this image is used. Click a preview to set own values for that crop. In the block editor the values can be adjusted for a single use."
+msgstr "Gilt überall, wo dieses Bild verwendet wird. Klicken Sie auf eine Vorschau, um eigene Werte für diesen Zuschnitt festzulegen. Im Block-Editor lassen sich die Werte für eine einzelne Verwendung anpassen."
+
+#: includes/Variants.php:44
+msgid "Portrait"
+msgstr "Hochformat"
+
+#: includes/Variants.php:49
+msgid "Square & circle"
+msgstr "Quadrat & Kreis"
+
+#. translators: %s: name of a crop, e.g. "Square & circle".
+#: build/editor.js:2
+#, js-format
+msgid "Own values for “%s”"
+msgstr "Eigene Werte für „%s“"
+
+#. translators: %s: name of a crop.
+#: build/editor.js:3
+#, js-format
+msgid "Saved to the image for every use cropped as “%s”. Other crops keep the general values."
+msgstr "Wird am Bild gespeichert und gilt für jede Verwendung im Zuschnitt „%s“. Andere Zuschnitte behalten die allgemeinen Werte."
+
+#. translators: %s: name of a crop.
+#: build/editor.js:4
+#, js-format
+msgid "This block crops the image as “%s”. Switch on to adjust this crop of the image separately; otherwise changes apply to all crops."
+msgstr "Dieser Block zeigt das Bild im Zuschnitt „%s“. Einschalten, um diesen Zuschnitt des Bildes separat anzupassen; sonst gelten Änderungen für alle Zuschnitte."

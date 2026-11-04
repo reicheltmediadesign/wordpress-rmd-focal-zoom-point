@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: RMD Focal Zoom Point 0.1.0\n"
+"Project-Id-Version: RMD Focal Zoom Point 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/reicheltmediadesign/wordpress-rmd-focal-zoom-point/issues\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-01T16:36:33+00:00\n"
+"POT-Creation-Date: 2026-11-04T22:01:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rmd-focal-zoom-point\n"
@@ -70,62 +70,90 @@ msgid "Block editor: select an image block (or a block your theme supports) and 
 msgstr ""
 
 #: includes/Admin/HelpPage.php:68
-msgid "Zoom also lets you move the focus in a direction where the image would otherwise not reach, e.g. sideways in a tall portrait shown as a circle."
+msgid "Own values per crop: if the focal point fits most crops but not one of them (e.g. the circle), click the preview of that crop in the media library and adjust it there. The other crops keep the general values (\"All crops\"). In the block editor, image blocks with an aspect ratio or the \"Rounded\" style offer \"Own values for …\" that crop."
 msgstr ""
 
 #: includes/Admin/HelpPage.php:69
+msgid "Zoom also lets you move the focus in a direction where the image would otherwise not reach, e.g. sideways in a tall portrait shown as a circle."
+msgstr ""
+
+#: includes/Admin/HelpPage.php:70
 msgid "Images that are not cropped look the same as before."
 msgstr ""
 
-#: includes/Admin/HelpPage.php:73
+#: includes/Admin/HelpPage.php:74
 msgid "The following guide for theme developers is only available in English."
 msgstr ""
 
-#: includes/Admin/HelpPage.php:79
+#: includes/Admin/HelpPage.php:80
 msgid "The theme integration guide (docs/theme-integration.md) is missing from this installation."
 msgstr ""
 
-#: includes/Admin/MediaField.php:34
-msgid "Wide banner"
+#: includes/Admin/MediaField.php:71
+msgid "Values for"
 msgstr ""
 
-#: includes/Admin/MediaField.php:39
-msgid "Landscape"
+#: includes/Admin/MediaField.php:72
+msgid "All crops"
 msgstr ""
 
-#: includes/Admin/MediaField.php:44
-msgid "Circle"
-msgstr ""
-
-#: includes/Admin/MediaField.php:97
+#: includes/Admin/MediaField.php:83
 msgid "Click the most important part of the image or drag the dot. Wherever the image is cropped, this part stays in view. Zoom enlarges the image around it – this also lets you move the focus sideways in a tall image shown in a square or circle."
 msgstr ""
 
-#: includes/Admin/MediaField.php:99
+#: includes/Admin/MediaField.php:84
+msgid "These values apply only to this crop. As long as you do not change them, it uses the values of “All crops”."
+msgstr ""
+
+#: includes/Admin/MediaField.php:86
 msgid "Horizontal"
 msgstr ""
 
-#: includes/Admin/MediaField.php:100
+#: includes/Admin/MediaField.php:87
 msgid "Vertical"
 msgstr ""
 
-#: includes/Admin/MediaField.php:101
+#: includes/Admin/MediaField.php:88
 #: build/editor.js:1
 msgid "Zoom"
 msgstr ""
 
-#: includes/Admin/MediaField.php:105
+#: includes/Admin/MediaField.php:92
 #: build/editor.js:1
 msgid "Reset"
 msgstr ""
 
-#: includes/Admin/MediaField.php:117
-msgid "Applies wherever this image is used. In the block editor it can be adjusted for a single use."
+#: includes/Admin/MediaField.php:93
+msgid "Use values of “All crops”"
 msgstr ""
 
-#: includes/Admin/MediaField.php:122
-#: build/editor.js:1
+#: includes/Admin/MediaField.php:102
+msgid "own values"
+msgstr ""
+
+#: includes/Admin/MediaField.php:106
+msgid "Applies wherever this image is used. Click a preview to set own values for that crop. In the block editor the values can be adjusted for a single use."
+msgstr ""
+
+#: includes/Admin/MediaField.php:111
+#: build/editor.js:4
 msgid "Focal point & zoom"
+msgstr ""
+
+#: includes/Variants.php:34
+msgid "Wide banner"
+msgstr ""
+
+#: includes/Variants.php:39
+msgid "Landscape"
+msgstr ""
+
+#: includes/Variants.php:44
+msgid "Portrait"
+msgstr ""
+
+#: includes/Variants.php:49
+msgid "Square & circle"
 msgstr ""
 
 #. translators: 1: required PHP version, 2: current PHP version
@@ -146,14 +174,32 @@ msgstr ""
 msgid "Enlarges the image around the focal point. Also lets you move the focus sideways in a tall image shown in a square or circle."
 msgstr ""
 
-#: build/editor.js:1
+#. translators: %s: name of a crop, e.g. "Square & circle".
+#: build/editor.js:2
+#, js-format
+msgid "Own values for “%s”"
+msgstr ""
+
+#. translators: %s: name of a crop.
+#: build/editor.js:3
+#, js-format
+msgid "Saved to the image for every use cropped as “%s”. Other crops keep the general values."
+msgstr ""
+
+#. translators: %s: name of a crop.
+#: build/editor.js:4
+#, js-format
+msgid "This block crops the image as “%s”. Switch on to adjust this crop of the image separately; otherwise changes apply to all crops."
+msgstr ""
+
+#: build/editor.js:4
 msgid "Adjust for this block only"
 msgstr ""
 
-#: build/editor.js:1
+#: build/editor.js:4
 msgid "These values apply only here. The image keeps its own values elsewhere."
 msgstr ""
 
-#: build/editor.js:1
+#: build/editor.js:4
 msgid "Changes are saved to the image right away and apply wherever it is used."
 msgstr ""

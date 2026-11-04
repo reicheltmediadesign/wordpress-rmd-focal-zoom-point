@@ -6,6 +6,7 @@ WordPress plugin that stores a **focal point** and a **zoom** factor on every im
 
 - **Set it once on the image.** A "Focal point & zoom" field in the media library: click the important part or drag the dot, set the zoom, check previews of typical crops.
 - **Or right where the image is used.** A panel in the block editor sidebar for image blocks and blocks your theme registers. Changes are saved to the image; the switch "Adjust for this block only" keeps different values for one place.
+- **Own values per crop.** If one focal point does not fit every crop – say landscape and portrait look right, but the circle is off – click the preview of that crop and adjust it there. The other crops keep the general values. Core image and featured image blocks pick the matching crop from their aspect ratio or the "Rounded" style; themes define their own crops.
 - **Zoom** enlarges the image around the focal point and keeps it as close to the middle as the edges allow. It also lets you move the focus sideways in a tall image shown in a square or circle, where the focal point alone has no room.
 - **Works with any theme** for cropped `<img>` elements (`object-fit: cover`): content images, `wp_get_attachment_image()`, featured images, core image blocks with an aspect ratio or the "Rounded" style. Images that are not cropped look exactly as before.
 - **Live preview** in the block editor canvas.
@@ -31,8 +32,8 @@ Later releases are offered under Dashboard → Updates like any other plugin.
 
 | Where | What |
 | --- | --- |
-| Media library (modal and edit screen) | Field "Focal point & zoom": picker, horizontal/vertical in percent, zoom 1–3, reset, previews |
-| Block editor → image block | Panel "Focal point & zoom"; values are saved to the image, or only for this block |
+| Media library (modal and edit screen) | Field "Focal point & zoom": picker, horizontal/vertical in percent, zoom 1–3, reset, a preview per crop; "All crops" or one crop with own values |
+| Block editor → image block | Panel "Focal point & zoom"; values are saved to the image, or only for this block. With an aspect ratio or the "Rounded" style also "Own values for …" that crop |
 | Block editor → blocks registered by the theme | Same panel |
 | Cover block | Takes the image's focal point when the image is chosen |
 
@@ -48,6 +49,12 @@ $style .= function_exists( 'rmd_fzp_style' ) ? rmd_fzp_style( $image_id ) : '';
 
 // Own blocks: panel and per-block override.
 add_filter( 'rmd_fzp_blocks', fn( $blocks ) => $blocks + [ 'mytheme/hero' => 'imageId' ] );
+
+// Crop variants: the crops of your theme, and which one a template uses.
+add_filter( 'rmd_fzp_variants', fn() => [
+	[ 'key' => 'team', 'label' => __( 'Team portrait', 'mytheme' ), 'ratio' => '1', 'round' => true ],
+] );
+echo wp_get_attachment_image( $id, 'medium', false, [ 'rmd_fzp_variant' => 'team' ] );
 ```
 
 ```css

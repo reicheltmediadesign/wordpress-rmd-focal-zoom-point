@@ -1,8 +1,9 @@
 <?php
 /**
- * Focal point and zoom of an image. The only place that defines the data
- * shape: every write path (media library field, REST, block attribute,
- * theme API) goes through FocalPoint::from().
+ * Focal point and zoom of an image. The only place that defines the shape of
+ * a point: every write path (media library field, REST, block attribute,
+ * theme API) goes through FocalPoint::from(), directly or through
+ * ImageFocus::from() for the values per crop variant.
  *
  * WordPress-free so it can be unit tested with plain PHPUnit.
  *

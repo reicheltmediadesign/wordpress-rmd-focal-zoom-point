@@ -25,4 +25,17 @@ final class InlineStyleTest extends TestCase {
 		$this->assertFalse( InlineStyle::has_property( '--x-object-position: 1; width: 2px', 'object-position' ) );
 		$this->assertFalse( InlineStyle::has_property( '', 'object-position' ) );
 	}
+
+	public function test_remove(): void {
+		$this->assertSame(
+			'object-fit:cover; background:url(a;b.png);',
+			InlineStyle::remove(
+				'object-fit:cover; Object-Position: 10% 20%; --rmd-fzp-x: 10%; background:url(a;b.png); --rmd-fzp-zoom: 2',
+				[ 'object-position' ],
+				[ '--rmd-fzp-' ]
+			)
+		);
+		$this->assertSame( '', InlineStyle::remove( 'object-position: 1px 2px;', [ 'object-position' ] ) );
+		$this->assertSame( '', InlineStyle::remove( '', [ 'object-position' ] ) );
+	}
 }

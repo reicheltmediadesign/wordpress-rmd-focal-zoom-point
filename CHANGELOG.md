@@ -5,6 +5,22 @@ All notable changes to this plugin are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Own focal point and zoom per crop variant. In the media library, “All crops” edits the general values; clicking a crop’s preview (or its button) edits only that crop. Crops without own values use the general values.
+- Crop variants `wide` (16 / 5), `landscape` (3 / 2), `portrait` (3 / 4) and `round` (square & circle), filter `rmd_fzp_variants` with `key`, `label`, `ratio`, `round`.
+- Core image and featured image blocks use the variant matching their aspect ratio or the “Rounded” style, also in the editor canvas. The block panel offers “Own values for …” for that crop.
+- Theme API: argument `rmd_fzp_variant` of `wp_get_attachment_image()`, parameter `$variant` of `rmd_fzp_point()`, `rmd_fzp_style()` and `rmd_fzp_image_tag()`, filters `rmd_fzp_block_variant` (PHP) and `rmdFzp.blockVariant` (JS), prop `variant` of `FocalZoomControl`, `useImagePoint( id, variant )`, `normalizeFocus()`, `blockVariant()` and `variants` in `window.rmdFocalZoomPoint`.
+
+### Changed
+
+- Post meta `_rmd_fzp` may contain `variants` (`{ key: { x, y, zoom } }`). Existing values stay valid.
+- `useImagePoint()` also returns `focus`, everything stored on the image.
+
+### Deprecated
+
+- Filter `rmd_fzp_previews`, use `rmd_fzp_variants`. Entries of the old filter get their keys from the labels.
+
 ## [0.1.2] – 2026-10-01
 
 ### Added

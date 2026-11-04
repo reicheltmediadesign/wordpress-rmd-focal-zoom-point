@@ -12,6 +12,7 @@
 namespace RMD\FocalZoomPoint;
 
 use RMD\FocalZoomPoint\Domain\FocalPoint;
+use RMD\FocalZoomPoint\Domain\Variant;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -73,5 +74,31 @@ final class Blocks {
 	 */
 	public static function override( array $attrs ): ?FocalPoint {
 		return isset( $attrs[ self::ATTRIBUTE ] ) ? FocalPoint::from( $attrs[ self::ATTRIBUTE ] ) : null;
+	}
+
+	/**
+	 * Crop variant a block shows its image in: from the aspect ratio
+	 * (attribute aspectRatio) and the block style "Rounded". Mirrored by
+	 * blockVariant() in src/editor/data.js.
+	 *
+	 * @param string $name  Block name.
+	 * @param array  $attrs Block attributes.
+	 * @return string|null Variant key, null if the crop is unknown.
+	 */
+	public static function variant( string $name, array $attrs ): ?string {
+		$class   = isset( $attrs['className'] ) && is_string( $attrs['className'] ) ? $attrs['className'] : '';
+		$round   = 1 === preg_match( '/(^|\s)is-style-rounded(\s|$)/', $class );
+		$variant = Variants::match( Variant::parse_ratio( $attrs['aspectRatio'] ?? null ), $round );
+
+		/**
+		 * Filters the crop variant of a block, e.g. for theme blocks that always
+		 * crop their image the same way. The editor has the JS filter
+		 * rmdFzp.blockVariant for the canvas preview and the panel.
+		 *
+		 * @param string|null $variant Variant key or null.
+		 * @param string      $name    Block name.
+		 * @param array       $attrs   Block attributes.
+		 */
+		return Variants::key( apply_filters( 'rmd_fzp_block_variant', $variant, $name, $attrs ) );
 	}
 }

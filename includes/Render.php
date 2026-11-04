@@ -12,6 +12,9 @@
  *   and featured image blocks itself; themes mark their own containers.
  * - Blocks registered through rmd_fzp_blocks without a matching <img>
  *   (background images) get the custom properties on their wrapper.
+ * - Where the crop is known (block aspect ratio, "Rounded" style, the
+ *   rmd_fzp_variant argument), the image's own values for that crop variant
+ *   are used, see Variants.
  *
  * @package RMD\FocalZoomPoint
  */
@@ -36,10 +39,13 @@ final class Render {
 	/** Key in the $attr argument of wp_get_attachment_image() for an override (array) or false to skip. */
 	public const ATTR_KEY = 'rmd_fzp';
 
+	/** Key in the $attr argument of wp_get_attachment_image() for the crop variant. */
+	public const VARIANT_KEY = 'rmd_fzp_variant';
+
 	public static function init(): void {
 		add_filter( 'wp_get_attachment_image_attributes', [ self::class, 'image_attributes' ], 10, 2 );
 		add_filter( 'wp_content_img_tag', [ self::class, 'content_image' ], 10, 3 );
-		add_filter( 'render_block', [ self::class, 'block' ], 10, 2 );
+		add_filter( 'render_block', [ self::class, 'block' ], 10, 3 );
 	}
 
 	/**
@@ -51,6 +57,12 @@ final class Render {
 	 * @return array
 	 */
 	public static function image_attributes( $attr, $attachment ) {
+		$variant = null;
+		if ( array_key_exists( self::VARIANT_KEY, $attr ) ) {
+			$variant = Variants::key( $attr[ self::VARIANT_KEY ] );
+			unset( $attr[ self::VARIANT_KEY ] );
+		}
+
 		$override = null;
 		if ( array_key_exists( self::ATTR_KEY, $attr ) ) {
 			$raw = $attr[ self::ATTR_KEY ];
@@ -61,7 +73,7 @@ final class Render {
 			$override = FocalPoint::from( $raw );
 		}
 
-		$point = $override ?? Meta::get( (int) $attachment->ID );
+		$point = $override ?? Meta::point( (int) $attachment->ID, $variant );
 		if ( ! $point ) {
 			return $attr;
 		}
@@ -89,7 +101,7 @@ final class Render {
 	 * @return string
 	 */
 	public static function content_image( $image, $context, $attachment_id ) {
-		$point = Meta::get( (int) $attachment_id );
+		$point = Meta::point( (int) $attachment_id );
 		if ( ! $point || false !== strpos( $image, self::MARKER ) ) {
 			return $image;
 		}
@@ -100,19 +112,20 @@ final class Render {
 	 * Supported blocks: per-use override, frame for zoom, wrapper properties
 	 * for background images.
 	 *
-	 * @param string $content Rendered block HTML.
-	 * @param array  $block   Parsed block.
+	 * @param string         $content  Rendered block HTML.
+	 * @param array          $block    Parsed block.
+	 * @param \WP_Block|null $instance Block instance, for the context.
 	 * @return string
 	 */
-	public static function block( $content, $block ) {
+	public static function block( $content, $block, $instance = null ) {
 		$name = $block['blockName'] ?? '';
 		if ( '' === $content || ! is_string( $name ) || '' === $name ) {
 			return $content;
 		}
+		$attrs = is_array( $block['attrs'] ?? null ) ? $block['attrs'] : [];
 
 		if ( 'core/post-featured-image' === $name ) {
-			// The image already carries the values from wp_get_attachment_image().
-			return self::wrap_zoomed_image( $content );
+			return self::wrap_zoomed_image( self::featured_image_variant( $content, $attrs, $instance ) );
 		}
 
 		$supported = Blocks::supported();
@@ -120,10 +133,9 @@ final class Render {
 			return $content;
 		}
 
-		$attrs    = is_array( $block['attrs'] ?? null ) ? $block['attrs'] : [];
 		$id       = (int) ( $attrs[ $supported[ $name ] ] ?? 0 );
 		$override = Blocks::override( $attrs );
-		$point    = $override ?? Meta::get( $id );
+		$point    = $override ?? Meta::point( $id, Blocks::variant( $name, $attrs ) );
 		if ( ! $point ) {
 			return $content;
 		}
@@ -138,12 +150,34 @@ final class Render {
 	}
 
 	/**
+	 * The featured image already carries the general values from
+	 * wp_get_attachment_image(). With an aspect ratio, the image's own values
+	 * for that crop replace them.
+	 *
+	 * @param string         $content  Rendered block HTML.
+	 * @param array          $attrs    Block attributes.
+	 * @param \WP_Block|null $instance Block instance.
+	 */
+	private static function featured_image_variant( string $content, array $attrs, $instance ): string {
+		$variant = Blocks::variant( 'core/post-featured-image', $attrs );
+		$post_id = $instance instanceof \WP_Block ? (int) ( $instance->context['postId'] ?? 0 ) : 0;
+		if ( null === $variant || $post_id <= 0 ) {
+			return $content;
+		}
+		$focus = Meta::get( (int) get_post_thumbnail_id( $post_id ) );
+		if ( ! $focus || ! $focus->has_variant( $variant ) ) {
+			return $content;
+		}
+		return self::apply_to_image( $content, $focus->variants[ $variant ], true );
+	}
+
+	/**
 	 * Adds the values to the first <img> (optionally the one with the given
 	 * class) in $html.
 	 *
 	 * @param string      $html        Markup.
 	 * @param FocalPoint  $point       Values.
-	 * @param bool        $force       Override an object-position and earlier values.
+	 * @param bool        $force       Replace an object-position and earlier values.
 	 * @param string|null $image_class Only an image with this class.
 	 */
 	public static function apply_to_image( string $html, FocalPoint $point, bool $force, ?string $image_class = null ): string {
@@ -159,6 +193,9 @@ final class Render {
 		$style = (string) $tags->get_attribute( 'style' );
 		if ( ! $force && ( null !== $tags->get_attribute( self::MARKER ) || InlineStyle::has_property( $style, 'object-position' ) ) ) {
 			return $html;
+		}
+		if ( $force ) {
+			$style = InlineStyle::remove( $style, [ 'object-position' ], [ '--rmd-fzp-' ] );
 		}
 
 		$tags->set_attribute( 'style', InlineStyle::append( $style, $point->declarations( true ) ) );

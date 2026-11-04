@@ -15,6 +15,7 @@ Set a focal point and zoom on every image in the media library or right where it
 Themes crop images all the time: wide banners, square cards, round portraits. RMD Focal Zoom Point stores the important part of each image and a zoom factor, and applies them wherever the image is cropped.
 
 * Focal point and zoom in the media library, with previews of typical crops.
+* Own values per crop, e.g. when the circle needs a different focus than landscape and portrait.
 * The same control in the block editor sidebar, saved to the image or only for one block.
 * Zoom keeps the focal point near the middle and also lets you move the focus sideways in a tall image shown as a circle.
 * Works with any theme for cropped images (object-fit: cover); images that are not cropped look as before.

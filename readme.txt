@@ -4,7 +4,7 @@ Tags: focal point, image, crop, zoom, media library
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 0.1.2
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,6 +38,12 @@ Zoom needs a container that clips the image. Core image and featured image block
 Print `rmd_fzp_style( $image_id )` into its style attribute and use `background-position: var(--rmd-fzp-pos, center)`.
 
 == Changelog ==
+
+= 0.2.0 =
+* Own focal point and zoom per crop: click a crop's preview in the media library to adjust only that crop; the others keep the general values.
+* New crop "Portrait"; "Circle" is now "Square & circle".
+* Image and featured image blocks use the crop matching their aspect ratio or the "Rounded" style; the block panel offers own values for it.
+* Theme API: filter rmd_fzp_variants (replaces rmd_fzp_previews, now deprecated), rmd_fzp_variant argument of wp_get_attachment_image(), $variant parameter of the rmd_fzp_* functions.
 
 = 0.1.2 =
 * Crop previews in the media library use a grid with at most two columns.

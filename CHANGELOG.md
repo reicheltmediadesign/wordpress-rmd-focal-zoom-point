@@ -5,6 +5,8 @@ All notable changes to this plugin are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] – 2026-11-04
+
 ### Added
 
 - Own focal point and zoom per crop variant. In the media library, “All crops” edits the general values; clicking a crop’s preview (or its button) edits only that crop. Crops without own values use the general values.
